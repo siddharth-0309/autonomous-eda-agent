@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Autonomous EDA Agent</title>
+<link rel="icon" href="data:,">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="bg-blobs" aria-hidden="true">
+  <span class="blob blob-a"></span>
+  <span class="blob blob-b"></span>
+  <span class="blob blob-c"></span>
+</div>
+
+<div class="app">
+
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark">◈</span>
+      <span>Autonomous EDA Agent</span>
+    </div>
+    <div class="topbar-right">
+      <span id="statusPill" class="status-pill status-idle">
+        <span class="status-dot"></span>Not connected
+      </span>
+      <button id="settingsBtn" class="icon-btn" title="Backend connection settings" aria-label="Settings">⚙</button>
+    </div>
+  </header>
+
+  <div class="layout">
+
+    <aside class="panel upload-panel">
+      <h2>New analysis</h2>
+
+      <label class="dropzone" id="dropzone" for="fileInput">
+        <input type="file" id="fileInput" accept=".csv,.xlsx,.xls" hidden />
+        <div class="dropzone-inner">
+          <span class="dz-icon">⇪</span>
+          <p id="dzText">Drop a CSV / Excel file<br><span class="dz-sub">or click to browse</span></p>
+        </div>
+      </label>
+
+      <label class="field-label" for="aimInput">What should the agent look for?</label>
+      <textarea id="aimInput" rows="3" placeholder="e.g. check missing values, outliers, and the salary–bonus correlation"></textarea>
+
+      <button id="runBtn" class="btn-primary" disabled>Run agent</button>
+
+      <div class="console">
+        <div class="console-head">
+          <span class="console-dot"></span>Agent console
+        </div>
+        <div class="console-body" id="consoleBody">
+          <p class="console-line dim">Waiting for a dataset…</p>
+        </div>
+      </div>
+    </aside>
+
+    <main class="main">
+
+      <section id="emptyState" class="empty-state">
+        <h1>Let an agent plan its own analysis.</h1>
+        <p>Upload a dataset and describe your aim. The agent decides which checks to run — missing values, dtypes, outliers, correlations — then reports what it found, cleans it, and hands back the file.</p>
+      </section>
+
+      <section id="dashboard" class="dashboard hidden">
+
+        <div class="tiles" id="tiles"></div>
+
+        <div class="grid-2">
+          <div class="card">
+            <h3>Summary report</h3>
+            <div id="summaryText" class="prose"></div>
+          </div>
+          <div class="card">
+            <h3>Interesting facts</h3>
+            <div id="factsGrid" class="facts-grid"></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Column statistics</h3>
+          <div class="table-wrap">
+            <table id="describeTable" class="describe-table"></table>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Visualizations</h3>
+          <div id="vizGrid" class="viz-grid"></div>
+        </div>
+
+        <div class="card">
+          <div class="card-head-row">
+            <h3>Cleaning proposals</h3>
+            <span class="card-hint">Toggle off anything you'd rather keep as-is</span>
+          </div>
+          <div id="duplicatesRow" class="cleaning-row hidden"></div>
+          <div id="cleaningList" class="cleaning-list"></div>
+          <button id="applyCleanBtn" class="btn-primary">Apply cleaning</button>
+        </div>
+
+        <div class="card hidden" id="resultCard">
+          <h3>Cleaned dataset</h3>
+          <div id="cleanResultTiles" class="tiles tiles-compact"></div>
+          <ul id="cleaningLog" class="cleaning-log"></ul>
+          <button id="downloadBtn" class="btn-secondary">Download cleaned CSV</button>
+        </div>
+
+      </section>
+    </main>
+  </div>
+</div>
+
+<div class="modal-overlay hidden" id="settingsModal">
+  <div class="modal">
+    <h3>Backend connection</h3>
+    <p class="modal-desc">Paste your Colab / ngrok backend URL. It changes every time the Colab runtime restarts. Saved only in this browser.</p>
+    <input id="apiUrlInput" type="text" placeholder="https://xxxx.ngrok-free.app" autocomplete="off" spellcheck="false" />
+    <div class="modal-actions">
+      <button id="closeModalBtn" class="btn-secondary">Cancel</button>
+      <button id="saveApiBtn" class="btn-primary">Save & test</button>
+    </div>
+    <p id="apiStatus" class="modal-status"></p>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
