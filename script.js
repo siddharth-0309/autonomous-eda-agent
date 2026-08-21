@@ -1,101 +1,129 @@
-const API_URL = "https://equity-grants-copying-brisbane.trycloudflare.com";
+document.addEventListener("DOMContentLoaded", () => {
 
-const fileInput = document.getElementById("fileInput");
-const analyzeBtn = document.getElementById("analyzeBtn");
-const uploadStatus = document.getElementById("uploadStatus");
+    const API_URL = "https://equity-grants-copying-brisbane.trycloudflare.com";
 
-analyzeBtn.addEventListener("click", analyzeDataset);
+    const fileInput = document.getElementById("fileInput");
+    const analyzeBtn = document.getElementById("analyzeBtn");
+    const uploadStatus = document.getElementById("uploadStatus");
 
-async function analyzeDataset() {
-    const file = fileInput.files[0];
+    console.log("🚀 Script loaded");
+    console.log("File input:", fileInput);
+    console.log("Analyze button:", analyzeBtn);
 
-    if (!file) {
-        alert("Please select a CSV or Excel file!");
+    if (!fileInput || !analyzeBtn) {
+        console.error("❌ fileInput or analyzeBtn not found!");
         return;
     }
 
-    const formData = new FormData();
-    formData.append("file", file);
+    analyzeBtn.addEventListener("click", analyzeDataset);
 
-    analyzeBtn.disabled = true;
-    analyzeBtn.innerText = "Analyzing...";
-    uploadStatus.innerHTML = "⏳ Running EDA Engine...";
+    async function analyzeDataset() {
 
-    try {
-        console.log("Connecting to:", API_URL);
+        console.log("🔥 Analyze button clicked");
 
-        const response = await fetch(`${API_URL}/analyze`, {
-            method: "POST",
-            body: formData
-        });
+        const file = fileInput.files[0];
 
-        console.log("API Status:", response.status);
-
-        if (!response.ok) {
-            throw new Error(`API returned ${response.status}`);
+        if (!file) {
+            alert("Please select a CSV or Excel file!");
+            return;
         }
 
-        const data = await response.json();
+        console.log("📁 File:", file.name);
 
-        console.log("API Response:", data);
+        const formData = new FormData();
+        formData.append("file", file);
 
-        // KPI
-        document.getElementById("rows").innerText =
-            data.profile.rows;
+        analyzeBtn.disabled = true;
+        analyzeBtn.innerText = "Analyzing...";
 
-        document.getElementById("columns").innerText =
-            data.profile.columns;
+        if (uploadStatus) {
+            uploadStatus.innerHTML = "⏳ Running EDA Engine...";
+        }
 
-        document.getElementById("missing").innerText =
-            data.profile.missing;
+        try {
 
-        document.getElementById("duplicates").innerText =
-            data.profile.duplicates;
+            console.log("🌐 Sending request...");
+            console.log("API:", API_URL);
 
-        // Column List
-        let html = `
-            <div class="glass-card">
-                <h3>Dataset Overview</h3>
+            const response = await fetch(`${API_URL}/analyze`, {
+                method: "POST",
+                body: formData
+            });
 
-                <p>
-                    <b>Total Columns:</b>
-                    ${data.profile.columns}
-                </p>
+            console.log("📡 Response status:", response.status);
 
-                <div class="chip-container">
-        `;
+            if (!response.ok) {
+                throw new Error(`API Error: ${response.status}`);
+            }
 
-        data.column_names.forEach(col => {
-            html += `
-                <span class="chip">
-                    ${col}
-                </span>
+            const data = await response.json();
+
+            console.log("✅ API Response:", data);
+
+            // KPI
+            document.getElementById("rows").innerText =
+                data.profile.rows;
+
+            document.getElementById("columns").innerText =
+                data.profile.columns;
+
+            document.getElementById("missing").innerText =
+                data.profile.missing;
+
+            document.getElementById("duplicates").innerText =
+                data.profile.duplicates;
+
+            // Dataset Overview
+            let html = `
+                <div class="glass-card">
+                    <h3>Dataset Overview</h3>
+
+                    <p>
+                        <b>Total Columns:</b>
+                        ${data.profile.columns}
+                    </p>
+
+                    <div class="chip-container">
             `;
-        });
 
-        html += `
+            data.column_names.forEach(col => {
+                html += `
+                    <span class="chip">${col}</span>
+                `;
+            });
+
+            html += `
+                    </div>
                 </div>
-            </div>
-        `;
+            `;
 
-        document.getElementById("dashboard").innerHTML = html;
+            document.getElementById("dashboard").innerHTML = html;
 
-        uploadStatus.innerHTML =
-            "✅ Analysis Completed Successfully";
+            if (uploadStatus) {
+                uploadStatus.innerHTML =
+                    "✅ Analysis Completed";
+            }
 
-    } catch (err) {
-        console.error("API Connection Error:", err);
+        } catch (error) {
 
-        uploadStatus.innerHTML =
-            "❌ Connection Failed — Check Console";
+            console.error("❌ ERROR:", error);
 
-        alert(
-            "Unable to connect to the EDA server.\n\n" +
-            "Please try again."
-        );
+            if (uploadStatus) {
+                uploadStatus.innerHTML =
+                    "❌ Connection Failed";
+            }
 
-    } finally {
-        analyzeBtn.disabled = false;
-        analyzeBtn.innerText = "Analyze Dataset";
+            alert(
+                "Connection failed.\n\n" +
+                "Open F12 → Console and check the error."
+            );
+
+        } finally {
+
+            analyzeBtn.disabled = false;
+            analyzeBtn.innerText = "Analyze Dataset";
+
+        }
     }
-}
+
+});
