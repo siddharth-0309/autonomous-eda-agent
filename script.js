@@ -1,4 +1,5 @@
-const API_URL = "https://answers-matrix-christine-airports.trycloudflare.com";
+const API_URL = "https://surface-built-california-hopes.trycloudflare.com
+";
 
 const fileInput = document.getElementById("fileInput");
 const analyzeBtn = document.getElementById("analyzeBtn");
