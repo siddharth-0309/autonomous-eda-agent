@@ -1,27 +1,318 @@
-const fileInput = document.getElementById("fileInput");
-const analyzeBtn = document.getElementById("analyzeBtn");
+/* =========================
+   Autonomous EDA Agent
+========================= */
 
-analyzeBtn.addEventListener("click", () => {
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Inter',sans-serif;
+}
 
-    const file = fileInput.files[0];
+body{
+    background:#070B1A;
+    color:#fff;
+    display:flex;
+    min-height:100vh;
+}
 
-    if (!file) {
-        alert("Please select a CSV or Excel file!");
-        return;
-    }
+/* Sidebar */
 
-    // Dummy UI update
-    document.getElementById("rows").innerText = "--";
-    document.getElementById("columns").innerText = "--";
-    document.getElementById("missing").innerText = "--";
-    document.getElementById("duplicates").innerText = "--";
+.sidebar{
+    width:240px;
+    background:#081225;
+    border-right:1px solid rgba(255,255,255,.08);
+    padding:24px;
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+}
 
-    document.getElementById("dashboard").innerHTML = `
-        <div class="glass-card">
-            <h3>📁 Dataset Selected</h3>
-            <p><strong>File:</strong> ${file.name}</p>
-            <p>Backend not connected yet.</p>
-            <p>Next step: FastAPI integration.</p>
-        </div>
-    `;
-});
+.logo{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    margin-bottom:35px;
+}
+
+.logo-circle{
+    width:48px;
+    height:48px;
+    border-radius:50%;
+    background:linear-gradient(135deg,#5B7CFF,#8B5CF6);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:700;
+}
+
+.logo h2{
+    font-size:18px;
+}
+
+.logo span{
+    color:#94A3B8;
+    font-size:12px;
+}
+
+.menu{
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+}
+
+.menu-btn{
+    background:transparent;
+    color:#CBD5E1;
+    border:none;
+    border-radius:12px;
+    padding:14px;
+    display:flex;
+    gap:10px;
+    align-items:center;
+    cursor:pointer;
+    transition:.3s;
+}
+
+.menu-btn:hover,
+.menu-btn.active{
+    background:linear-gradient(90deg,#355DFF,#7C3AED);
+    color:#fff;
+}
+
+.sidebar-footer{
+    color:#64748B;
+    font-size:13px;
+}
+
+/* Main */
+
+.main{
+    flex:1;
+    padding:28px;
+}
+
+.header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:28px;
+}
+
+.header h1{
+    font-size:28px;
+}
+
+.header p{
+    color:#94A3B8;
+    margin-top:6px;
+}
+
+.status{
+    background:#11203A;
+    padding:8px 14px;
+    border-radius:30px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+    font-size:14px;
+}
+
+.dot{
+    width:10px;
+    height:10px;
+    border-radius:50%;
+    background:#22C55E;
+}
+
+/* Hero */
+
+.hero{
+    background:linear-gradient(135deg,#1D4ED8,#7C3AED);
+    border-radius:24px;
+    padding:40px;
+    margin-bottom:25px;
+    position:relative;
+    overflow:hidden;
+}
+
+.hero::after{
+    content:'';
+    position:absolute;
+    width:220px;
+    height:220px;
+    background:rgba(255,255,255,.08);
+    border-radius:50%;
+    right:-70px;
+    top:-70px;
+}
+
+.hero h2{
+    font-size:32px;
+    margin-bottom:12px;
+}
+
+.hero p{
+    color:#E2E8F0;
+    max-width:500px;
+}
+
+.hero-tags{
+    display:flex;
+    gap:12px;
+    margin-top:20px;
+}
+
+.hero-tags span{
+    background:rgba(255,255,255,.15);
+    padding:8px 16px;
+    border-radius:30px;
+    font-size:13px;
+}
+
+/* Upload */
+
+.upload-card{
+    background:rgba(255,255,255,.06);
+    border:1px solid rgba(255,255,255,.08);
+    backdrop-filter:blur(18px);
+    border-radius:20px;
+    padding:25px;
+    margin-bottom:25px;
+}
+
+.upload-card h3{
+    margin-bottom:8px;
+}
+
+.upload-card p{
+    color:#94A3B8;
+    margin-bottom:18px;
+}
+
+input[type=file]{
+    width:100%;
+    padding:14px;
+    border-radius:12px;
+    border:1px dashed #475569;
+    background:#0F172A;
+    color:#CBD5E1;
+    margin-bottom:18px;
+}
+
+#analyzeBtn{
+    width:100%;
+    padding:14px;
+    border:none;
+    border-radius:12px;
+    color:#fff;
+    cursor:pointer;
+    font-size:15px;
+    background:linear-gradient(90deg,#355DFF,#8B5CF6);
+    transition:.3s;
+}
+
+#analyzeBtn:hover{
+    transform:translateY(-2px);
+    box-shadow:0 10px 25px rgba(124,58,237,.35);
+}
+
+#uploadStatus{
+    margin-top:15px;
+    color:#22C55E;
+    font-size:14px;
+}
+
+/* KPI */
+
+.stats-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:18px;
+    margin-bottom:25px;
+}
+
+.stat-card{
+    background:rgba(255,255,255,.06);
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:18px;
+    padding:20px;
+    backdrop-filter:blur(18px);
+}
+
+.stat-card h4{
+    color:#94A3B8;
+    font-size:14px;
+    margin-bottom:10px;
+}
+
+.stat-card h2{
+    font-size:30px;
+}
+
+/* Dashboard */
+
+.glass-card{
+    background:rgba(255,255,255,.06);
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:20px;
+    backdrop-filter:blur(20px);
+    padding:24px;
+}
+
+.glass-card h3{
+    margin-bottom:12px;
+}
+
+.glass-card p{
+    color:#CBD5E1;
+}
+
+.chip-container{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    margin-top:18px;
+}
+
+.chip{
+    background:#172554;
+    color:#BFDBFE;
+    padding:8px 14px;
+    border-radius:30px;
+    font-size:13px;
+}
+
+/* Responsive */
+
+@media(max-width:900px){
+
+.sidebar{
+    display:none;
+}
+
+.stats-grid{
+    grid-template-columns:repeat(2,1fr);
+}
+
+.hero h2{
+    font-size:24px;
+}
+
+}
+
+@media(max-width:600px){
+
+.stats-grid{
+    grid-template-columns:1fr;
+}
+
+.main{
+    padding:18px;
+}
+
+.hero{
+    padding:24px;
+}
+
+}
