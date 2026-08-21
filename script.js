@@ -1,4 +1,4 @@
-const API_URL = "https://runner-health-gbp-church.trycloudflare.com";
+const API_URL = "https://answers-matrix-christine-airports.trycloudflare.com";
 
 const fileInput = document.getElementById("fileInput");
 const analyzeBtn = document.getElementById("analyzeBtn");
